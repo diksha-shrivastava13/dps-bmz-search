@@ -27,9 +27,9 @@ Settings.llm = llm
 
 # File Processing Functions
 def create_index(file_path):
-    loader = SimpleDirectoryReader(input_files=[file_path], required_exts=[".pdf"])
-    docs = loader.load_data()
-    index = VectorStoreIndex.from_documents(docs)
+    parser = LlamaParse(result_type="markdown", num_workers=8)
+    documents = parser.load_data(file_path)
+    index = VectorStoreIndex.from_documents(documents)
 
     return index
 
@@ -53,7 +53,10 @@ def user_query_answer(index, user_query):
     query_answer = query_engine.query(user_query + " Make the answer as detailed and as comprehensive as required."
                                       + " Make sure to use the documents as context to answer the question."
                                       + " If you cannot find an answer from the documents, tell the user to go through"
-                                        "the original document they uploaded. Respond in German.")
+                                        "the original document they uploaded. Respond in German. Clearly mention all"
+                                        "the numeric data related to the user query and the context associated with"
+                                        "it. Mentioning numbers, if required, is very important to the user. Be as"
+                                        "detailed as possible and include all relevant information about the question.")
     return query_answer
 
 
